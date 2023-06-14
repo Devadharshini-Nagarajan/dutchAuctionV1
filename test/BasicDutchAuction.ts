@@ -23,11 +23,20 @@ describe("BasicDutchAuction", function () {
   });
 
   describe("Deployment", function () {
-    it("Should set the correct initial values", async function () {
-      expect(await dutchAuction.seller()).to.equal(seller.address);
-      expect(await dutchAuction.reservePrice()).to.equal(100);
-      expect(await dutchAuction.numBlocksAuctionOpen()).to.equal(100);
-      expect(await dutchAuction.offerPriceDecrement()).to.equal(1);
+    it("Should set the right owner", async function () {
+        expect(await dutchAuction.seller()).to.equal(seller.address);
+    });
+
+    it("Should set the right reserve price", async function () {
+        expect(await dutchAuction.reservePrice()).to.equal(100);
+    });
+
+    it("Should set the right number of block auction open", async function () {
+        expect(await dutchAuction.numBlocksAuctionOpen()).to.equal(100);
+    });
+
+    it("Should set the right offer price decrement", async function () {
+        expect(await dutchAuction.offerPriceDecrement()).to.equal(1);
     });
   });
 
@@ -39,7 +48,6 @@ describe("BasicDutchAuction", function () {
     });    
     
     it("Should reject bids after the auction has ended", async function () {
-
         await dutchAuction.connect(buyer).placeBid({ value: 101 });
         expect(await dutchAuction.isAuctionOver()).to.be.true;
 
@@ -47,8 +55,6 @@ describe("BasicDutchAuction", function () {
             "Auction is ended!"
         );
     });
-
-
 
     it("Should reject bids after the no of blocks open count reached", async function () {
         await increaseBlocks(200);
@@ -63,7 +69,7 @@ describe("BasicDutchAuction", function () {
       await dutchAuction.connect(buyer).placeBid({ value: 101 });
 
       expect(await dutchAuction.isAuctionOver()).to.be.true;
-    //   expect(await ethers.provider.getBalance(seller.address)).to.equal(initialBalance.add(101));
+    //   expect(await ethers.provider.getBalance(seller.address)).to.equal(initialBalance + ethers.utils.parseUnits("101", 18));
     });
 
     it("Should refund a bid that is below the current price", async function () {
