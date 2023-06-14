@@ -69,16 +69,18 @@ describe("BasicDutchAuction", function () {
       await dutchAuction.connect(buyer).placeBid({ value: 101 });
 
       expect(await dutchAuction.isAuctionOver()).to.be.true;
-    //   expect(await ethers.provider.getBalance(seller.address)).to.equal(initialBalance + ethers.utils.parseUnits("101", 18));
+      expect(await ethers.provider.getBalance(seller.address)).to.greaterThan(initialBalance);
     });
 
-    it("Should refund a bid that is below the current price", async function () {
+    it("Should reject a bid if price lesser and transfer back it to buyer", async function () {
       const initialBalance = await ethers.provider.getBalance(buyer.address);
+      const initialBalanceSeller =  await ethers.provider.getBalance(seller.address)
 
       await dutchAuction.connect(buyer).placeBid({ value: 99 });
 
       expect(await dutchAuction.isAuctionOver()).to.be.false;
-    //   expect(await ethers.provider.getBalance(buyer.address)).to.equal(initialBalance.sub(99));
+      expect(await ethers.provider.getBalance(buyer.address)).to.lessThan(initialBalance);
+      expect(await ethers.provider.getBalance(seller.address)).to.eq(initialBalanceSeller);
     });
   });
 });
